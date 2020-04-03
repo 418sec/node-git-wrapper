@@ -15,6 +15,10 @@ var Git = module.exports = function (options) {
   this.args = Git.optionsToString(options);
 };
 
+var escapeSpecialChars = function(cmd) {
+  return cmd.replace(/([`$&{}[;|])/g,'');
+}
+
 // git.exec(command [[, options], args ], callback)
 Git.prototype.exec = function (command, options, args, callback) {
   callback = arguments[arguments.length - 1];
@@ -33,7 +37,7 @@ Git.prototype.exec = function (command, options, args, callback) {
   var cmd = this.binary + ' ' + this.args + ' ' + command + ' ' + options + ' '
     + args;
 
-  exec(cmd, {
+  exec(escapeSpecialChars(cmd), {
     cwd: this.cwd
   }, function (err, stdout, stderr) {
     callback(err, stdout);
